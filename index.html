@@ -30,10 +30,21 @@
   // Get a reference to the database service
   var database = firebase.database();
 
-
         // This creates the connection to the database
       var toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
-     
+ 
+//reads all values in database, automatically updates when database changes 
+toDoDB.on('value', showItems);
+function showItems(snapshot){
+            //gets data in database as a list
+            var data = snapshot.val();
+            //loops over each identifier in database
+            for (var identifier in data) {
+                console.log("ID: " + identifier); 
+                console.log("Timestamp: " + data[identifier].created_at + ", id_str:" + data[identifier].id_str + ", text:" + data[identifier].text);
+            }
+        }  
+
   function addItem(){
 
           var tweetID = $("#tweetID").val();

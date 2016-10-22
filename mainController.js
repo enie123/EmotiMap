@@ -1,5 +1,5 @@
-var myApp = angular.module('myApp', ['ui.bootstrap','ngTwitter']);
-myApp.controller('myCtrl', function ($scope,$http,$twitterApi) {
+var myApp = angular.module('myApp', ['ui.bootstrap']);
+myApp.controller('myCtrl', function ($scope,$http) {
   $scope.sdata = {};
 	$scope.config = {
     apiKey: "AIzaSyCxZkuXU1RqMPbUjhOk9b6VIHGhQ3U1BBU",
@@ -11,7 +11,7 @@ myApp.controller('myCtrl', function ($scope,$http,$twitterApi) {
   $scope.database = firebase.database();
   $scope.toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
   $scope.usersRef = $scope.toDoDB.child("users");
-
+  $scope.hashtag = "";
 	$scope.data = {
       	"documents": [
       		{
@@ -37,7 +37,8 @@ myApp.controller('myCtrl', function ($scope,$http,$twitterApi) {
   }; 
 
   $scope.toDoDB.on('value', $scope.showItems);
-  $scope.getData = 
+
+
   $scope.sentiment = function(data){
     $scope.req.data = data;
     $http($scope.req).then(function(data,status){
@@ -54,21 +55,6 @@ myApp.controller('myCtrl', function ($scope,$http,$twitterApi) {
     "lang":"en",
     "result_type":"mixed",
     "count":"10"
-  };
-  console.log('hi');
-  $.getJSON('/hackharvard/twitter-proxy.php?url='+encodeURIComponent('search/tweets.json?q=%23QED&lang=en&result_type=mixed&count=10'), function() {
-  console.log( "success" );
-})
-  .done(function() {
-    console.log( "second success" );
-  })
-  .fail(function() {
-    console.log( "error" );
-  })
-
-  $twitterApi.configure("xvz1evFS4wEEPTGEFPHBog", 'kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw', "7370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb");
-  $scope.search = function(){
-    $twitterApi.searchTweets("trump", $scope.req3 ).then(function(data){console.log(data)},function(data){console.log(data.toString())});
   };
 
   $scope.req = {
@@ -91,14 +77,18 @@ myApp.controller('myCtrl', function ($scope,$http,$twitterApi) {
     "result_type":"mixed",
     "count":"10"
   };
-
-  $http($scope.req2).then(function(data,status){
-      console.log(data);
-      console.log("i got dis");
-    }, function(data){
-      console.log(data);
-      console.log("ohshit");
-    }
-  );
+  $scope.search = function(){
+    $scope.req2.url = 'http://aamirafridi.com/twitter/?q='+$scope.hashtag+'&count=100'
+    $http($scope.req2).then(function(data,status){
+        console.log(data);
+        $scope.data = data.data.statuses;
+        $scope.sentiment($scope.data);
+        console.log("i got dis");
+      }, function(data){
+        console.log(data);
+        console.log("ohshit");
+      }
+    );
+  };
 
 });

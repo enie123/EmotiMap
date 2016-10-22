@@ -1,0 +1,93 @@
+
+<!doctype html>
+<html ng-app="myApp">
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="http://code.angularjs.org/1.5.8/angular.js"></script>
+    <script src="mainController.js"></script>
+    <script src="https://rawgit.com/dotansimha/angularjs-dropdown-multiselect/master/src/angularjs-dropdown-multiselect.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.1.3/ui-bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src='https://cdn.firebase.com/js/client/1.0.15/firebase.js'></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+    <script>
+
+
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      numarray = [];
+      var toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
+      // This tells your web browser to respond when
+      // SOMEONE (i.e. maybe not even you) adds to the database
+      toDoDB.on('value', showItems);
+      function showItems(snapshot){
+          //gets data in database as a list
+          var data = snapshot.val();
+          //loops over each identifier in database
+          for (var identifier in data) {
+
+                  numarray.push(data[identifier].score);
+                  console.log(data[identifier].score);
+              //console.log("ID: " + identifier);
+              //console.log("Data: " + data[identifier].task + ", " + data[identifier].reps);
+          }
+          drawChart();
+      }
+            //database shit
+      function drawChart() {
+
+         console.log(numarray);
+
+         var likes = 0;
+         var dislikes = 0;
+         var neutrals = 0;
+         var num = 0;
+         while (num < numarray.length) {
+             console.log(num);
+             if (0.4 >= numarray[num]) {
+                 dislikes += 1;
+             }
+             else if (0.6 <= numarray[num]) {
+                 likes += 1;
+             }
+             else {
+                 neutrals += 1;
+             }
+             num++;
+         }
+         var total = likes + dislikes + neutrals;
+         console.log(total);
+        var data = google.visualization.arrayToDataTable([
+          ['Sentiment', 'Percentage'],
+          ['Like',     likes/total],
+          ['Dislike',   dislikes/total],
+          ['Neutral',  neutrals/total]
+        ]);
+        console.log(likes/total);
+
+        var options = {
+          title: 'My Daily Activities'
+        };
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+
+      }
+
+    </script>
+
+  </head>
+  <body ng-controller="myCtrl">
+        <input class="form-control" type='text' style="margin-top:15px;width:150px" ng-model="hashtag" placeholder="Enter Hashtag"></input>
+        <button class="form-control" style="margin-top:15px;width:150px" ng-click="search()">Search</button>
+        <div> {{data[0]}} </div>
+        <div id="piechart" style="width: 900px; height: 500px;"></div>
+        <div id="chart_div" style="width: 900px; height: 500px;"></div>
+
+  </body>
+</html>

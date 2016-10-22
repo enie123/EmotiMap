@@ -5,9 +5,11 @@ myApp.controller('myCtrl', function ($scope,$http) {
     apiKey: "AIzaSyCxZkuXU1RqMPbUjhOk9b6VIHGhQ3U1BBU",
     authDomain: " twitter-emotions.firebaseapp.com",
     databaseURL: "https://twitter-emotions.firebaseio.com",
-    storageBucket: ""
+    storageBucket: "",
+    name: "hi"
   };
   firebase.initializeApp($scope.config);
+  $scope.hide=true;
   $scope.database = firebase.database();
   $scope.toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
   $scope.usersRef = $scope.toDoDB.child("users");
@@ -26,17 +28,7 @@ myApp.controller('myCtrl', function ($scope,$http) {
     		}
   		]
 	};
-  $scope.showItems = function(snapshot){
-    //gets data in database as a list
-    var data = snapshot.val();
-    //loops over each identifier in database
-    for (var identifier in data) {
-      console.log("ID: " + identifier); 
-      console.log("Timestamp: " + data[identifier].created_at + ", id_str:" + data[identifier].id_str + ", text:" + data[identifier].text);
-    }
-  }; 
-
-  $scope.toDoDB.on('value', $scope.showItems);
+  
 
 
   $scope.sentiment = function(data){
@@ -45,7 +37,7 @@ myApp.controller('myCtrl', function ($scope,$http) {
         console.log(data)
         $scope.sdata = data.documents;
       }, function(){
-        console.log("ohshitmuch") 
+        console.log("ohshitmuch")
       });
   };
 
@@ -78,6 +70,7 @@ myApp.controller('myCtrl', function ($scope,$http) {
     "count":"10"
   };
   $scope.search = function(){
+    $scope.hide=false;
     $scope.req2.url = 'http://aamirafridi.com/twitter/?q='+$scope.hashtag+'&count=100'
     $http($scope.req2).then(function(data,status){
         console.log(data);

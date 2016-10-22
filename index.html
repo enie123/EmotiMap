@@ -6,7 +6,7 @@
     <script src='https://cdn.firebase.com/js/client/1.0.15/firebase.js'></script>
     <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css" />
     <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script src="https://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.js"></script>
+
     
 <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
 
@@ -33,24 +33,7 @@
 
         // This creates the connection to the database
       var toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
-      var usersRef = toDoDB.child("users");
-      // This tells your web browser to respond when
-      // SOMEONE (i.e. maybe not even you) adds to the database
-      toDoDB.on('value', showItems);
-
      
-      function showItems(snapshot){
-          //gets data in database as a list
-          var data = snapshot.val();
-          //loops over each identifier in database
-          for (var identifier in data) {
-              console.log("Name: ", identifier);
-              for (var index in data[identifier]) {
-                  console.log(data[identifier][index]["task"], " for ", data[identifier][index]["reps"], " reps");
-              }
-          }
-      }        
-
   function addItem(){
 
           var tweetID = $("#tweetID").val();
@@ -58,30 +41,52 @@
           var created_at = $('#created_at').val();
           var tweetText = $('#tweetText').val();
 
-          var wholetweet = {"coordinates": coord, "geotag": created_at, "text": tweetText};
+          var wholetweet = {"coordinates": coord, "created_at": created_at, "id_str": tweetID, "text": tweetText};
+   
+          toDoDB.push(wholetweet);
+          alert('done');
 
-          alert(tweetID);
-          toDoDB.child(tweetID).push(wholetweet);
-          location.reload();
       }
  
-        
-  function removeItem() {
-          alert("Remove function got called!");
-          var idToRemove = $("#oldid").val();
-          toDoDB.child(idToRemove).remove();
-      }
 
-function parsetweets(){
-  console.log('show tweets');
-var json = 'tweets.json',
-obj = JSON.parse(json);
 
-console.log('done');
+function addJSON() {
+  tweets = [
+      {
+        "coordinates": null,
+        "created_at": "Mon Sep 24 03:35:21 +0000 2012",
+        "id_str": "250075927172759552",
+        "text": "Aggressive Ponytail #freebandnames", 
+        "geo": null,
+      },
+      {
+        "coordinates": null,
+        "created_at": "Fri Sep 21 23:40:54 +0000 2012",
+        "id_str": "249292149810667520",
+        "text": "Thee Namaste Nerdz. #FreeBandNames",
+        "geo": null,   
+      },
+      {
+        "coordinates": null,
 
-}
+        "created_at": "Fri Sep 21 23:30:20 +0000 2012",
+        "id_str": "249289491129438208",
+        "text": "Mexican Heaven, Mexican Hell #freebandnames",
+        "geo": null,
+      },
+      {
+        "coordinates": null,
+        "created_at": "Fri Sep 21 22:51:18 +0000 2012",
+        "id_str": "249279667666817024",
+        "text": "The Foolish Mortals #freebandnames",
+        "geo": null,
 
-parsetweets();
+      }];
+
+      toDoDB.push(tweets);
+
+  }
+
         
     </script>
 </head>
@@ -100,9 +105,9 @@ parsetweets();
 <input type="text" data-clear-btn="true" id="tweetText" placeholder="tweetText"/>
 
 
-<button onclick="addItem()">Click me</button>
+<button onclick="addItem()">add to firebase</button>
 
-<button onclick="parsetweets()">JSON</button>
+<button onclick="addJSON()">add hardcoded json to firebase</button>
 
 
 

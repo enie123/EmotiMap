@@ -1,7 +1,7 @@
 var myApp = angular.module('myApp', ['ui.bootstrap']);
 myApp.controller('myCtrl', function ($scope,$http) {
   $scope.sdata = {};
-	$scope.config = {
+  $scope.config = {
     apiKey: "AIzaSyCxZkuXU1RqMPbUjhOk9b6VIHGhQ3U1BBU",
     authDomain: " twitter-emotions.firebaseapp.com",
     databaseURL: "https://twitter-emotions.firebaseio.com",
@@ -11,21 +11,21 @@ myApp.controller('myCtrl', function ($scope,$http) {
   $scope.database = firebase.database();
   $scope.toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
   $scope.usersRef = $scope.toDoDB.child("users");
-  $scope.hashtag = "";
-	$scope.data = {
-      	"documents": [
-      		{
-      			"language": "en",
-      			"id": "blabbity",
-      			"text": "microsoft"
-    		},
-    		{
-     			"language":"en",
-      			"id":"es",
-    			"text":"fuckfuckfuckfuckfuck"
-    		}
-  		]
-	};
+  $scope.hashtag = " ";
+  $scope.data = {
+        "documents": [
+          {
+            "language": "en",
+            "id": "blabbity",
+            "text": "microsoft"
+        },
+        {
+          "language":"en",
+            "id":"es",
+          "text":"lol"
+        }
+      ]
+  };
   $scope.showItems = function(snapshot){
     //gets data in database as a list
     var data = snapshot.val();
@@ -52,7 +52,7 @@ myApp.controller('myCtrl', function ($scope,$http) {
           newData[loop]["created_at"] = $scope.original[loop]['created_at'];
           if ($scope.original[loop]['user']!=null & $scope.original[loop]['user']['location']!=null){newData[loop]['place'] = $scope.original[loop]['user']['location']
           } else {
-            console.log("no loc");
+            console.log("o7");
           };
           $scope.toDoDB.push(newData[loop]);
           loop++;
@@ -61,14 +61,6 @@ myApp.controller('myCtrl', function ($scope,$http) {
       }, function(){
         console.log("ohshitmuch") 
       });
-  };
-
-
-  $scope.req3 = {
-    "q":"%23Trump",
-    "lang":"en",
-    "result_type":"mixed",
-    "count":"10"
   };
 
   $scope.req = {
@@ -80,28 +72,30 @@ myApp.controller('myCtrl', function ($scope,$http) {
         },
         data: $scope.data
   };
+
   $scope.req2 = {
     method: 'POST',
     url:'http://aamirafridi.com/twitter/?q=%23abc&count=100',
   };
 
-  $scope.req3 = {
-    "q":"%23Trump",
-    "lang":"en",
-    "result_type":"mixed",
-    "count":"10"
-  };
   $scope.search = function(){
+    $scope.toDoDB.remove();
+    if ($scope.hashtag.charAt(0) == "#") {
+      $scope.hashtag = "%23" + $scope.hashtag(1);
+    };
     $scope.req2.url = 'http://aamirafridi.com/twitter/?q='+$scope.hashtag+'&lang=en&count=100'
-    $http($scope.req2).then(function(data,status){
-        $scope.data = data.data.statuses;
-        $scope.sentiment($scope.data);
-        console.log("i got dis");
-      }, function(data){
-        console.log(data);
-        console.log("ohshit");
-      }
-    );
+    count = 0;
+    while (count < 4) {
+      $http($scope.req2).then(function(data,status){
+          $scope.data = data.data.statuses;
+          $scope.sentiment($scope.data);
+        }, function(data){
+          console.log(data);
+          console.log("ohshit");
+        }
+      );
+      count++;
+    };
   };
 
 });

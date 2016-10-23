@@ -1,32 +1,50 @@
         //extract the places and sentiment_array from the database
-        //TODO: var place_array = [];
-        //TODO: var sentiment_array = [];
 
+
+      var config = {
+        apiKey: "AIzaSyCxZkuXU1RqMPbUjhOk9b6VIHGhQ3U1BBU",
+        authDomain: "twitter-emotions.firebaseapp.com",
+        databaseURL: "https://twitter-emotions.firebaseio.com",
+        storageBucket: ""
+      };
+      firebase.initializeApp(config);
+
+        var place_array = [];
+        var flag = true;
+        var sentiment_array = [];
         //put values from database into the arrays
-        //function makeArray(){
-        //    var toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
-        //    // This tells your web browser to respond when
-        //    // SOMEONE (i.e. maybe not even you) adds to the database
-        //    toDoDB.on('value', showItems);
-        //    function showItems(snapshot){
-        //        //gets data in database as a list
-        //        var data = snapshot.val();
-        //        //loops over each identifier in database
-        //        for (var identifier in data) {
-        //            for (var entry in identifier){
-        //                place_array.push(data[identifier][entry].place)
-        //                sentiment_array.push(data[identifier][entry].sentiment_array) 
-        //            }
-        //        }
-        //    }
-        //}
+        function makeArray(){
+            var toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
+            // This tells your web browser to respond when
+            // SOMEONE (i.e. maybe not even you) adds to the database
+            toDoDB.on('value', showItems);
+            function showItems(snapshot){
+                if(flag){
+                    flag = false;
+                    console.log(snapshot.val());
+                //gets data in database as a list
+                    var data = snapshot.val();
+                //loops over each identifier in database
+                    for (var identifier in data) {
+                            if(data[identifier] && data[identifier]['place']){
+                                place_array.push(data[identifier]['place']);
+                                sentiment_array.push(data[identifier]['score']);
+                            }
+                    }
+                    initMap();
+                }
+            }
+        }
 
          
-       var place_array = ["Boston, MA", "Westborough, MA", "Austin, TX","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA"];
-       var sentiment_array = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.0, 0.1, 0.2];
+       //var place_array = ["Boston, MA", "Westborough, MA", "Austin, TX","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA"];
+       //var sentiment_array = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.0, 0.1, 0.2];
        var locations = [];
        var markers = [];
         var count = 0;
+        makeArray();
+        console.log(place_array);
+        console.log(sentiment_array);
        // Create an array of alphabetical characters used to label the markers.
        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
        function initMap() {
@@ -42,11 +60,15 @@
             console.log(markerCluster);
             var geocoder = new google.maps.Geocoder();
             //for the location points in location array
+            var count = 0;
             for(var i = 0; i < place_array.length; i++){
                 locations[i] = geocodeAddress(place_array[i], geocoder, map, markerCluster);
+                setTimeout(function(){
+                },20);
                 console.log(locations[i]);
+                count++;
             }
-
+            console.log(locations);
             // Add some markers to the map.
             // Note: The code uses the JavaScript Array.prototype.map() method to
             // create an array of markers based on a given "locations" array.
@@ -57,9 +79,7 @@
                 label: labels[i % labels.length]
               });
             });*/
-            for(var i =0; i<locations.length; i++){
-                console.log(locations[i]);
-            };
+             flag = true;
             // Add a marker clusterer to manage the markers.
             //var markerCluster = new MarkerClusterer(map, [new google.maps.Marker({ position: {lat: -31.563910, lng: 147.154312}}),  new google.maps.Marker({position: {lat: -31.563910, lng: 147.154312}})], {imagePath: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m', maxZoom: 3, gridSize: 10});      
             //markerCluster.addMarker(new google.maps.Marker({ position: {lat: -31.061925, lng: 145.194293}}), false);

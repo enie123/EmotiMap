@@ -84,8 +84,7 @@ function MarkerClusterer(map, opt_markers, opt_options) {
    */
   this.avg_sentiment_ = [];
 
-  this.sizes = [50, 75, 100, 120, 140];
-
+  this.sizes = [53, 56, 66, 78, 90];
 
   /**
    * @private

@@ -1,0 +1,5 @@
+//Numbers 0 - 19 are for negative sentiment
+//Numbers 20 - 39 are for positive sentiment
+//Numbers 40 - 41 are for neutral sentiment 
+//Number % 4 is equivalent to the sentiment class ie [0-.9], [.10-.19], [.20-.29], [.30-.39], [.40-.44], [.45, .54], [.55, .59] ...
+

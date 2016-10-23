@@ -1,25 +1,25 @@
         //extract the places and sentiment_array from the database
-       //TODO: var place_array = [];
+        //TODO: var place_array = [];
         //TODO: var sentiment_array = [];
 
         //put values from database into the arrays
-        function makeArray(){
-            var toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
-            // This tells your web browser to respond when
-            // SOMEONE (i.e. maybe not even you) adds to the database
-            toDoDB.on('value', showItems);
-            function showItems(snapshot){
-                //gets data in database as a list
-                var data = snapshot.val();
-                //loops over each identifier in database
-                for (var identifier in data) {
-                    for (var entry in identifier){
-                        place_array.push(data[identifier][entry].place)
-                        sentiment_array.push(data[identifier][entry].sentiment_array) 
-                    }
-                }
-            }
-        }
+        //function makeArray(){
+        //    var toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
+        //    // This tells your web browser to respond when
+        //    // SOMEONE (i.e. maybe not even you) adds to the database
+        //    toDoDB.on('value', showItems);
+        //    function showItems(snapshot){
+        //        //gets data in database as a list
+        //        var data = snapshot.val();
+        //        //loops over each identifier in database
+        //        for (var identifier in data) {
+        //            for (var entry in identifier){
+        //                place_array.push(data[identifier][entry].place)
+        //                sentiment_array.push(data[identifier][entry].sentiment_array) 
+        //            }
+        //        }
+        //    }
+        //}
 
          
        var place_array = ["Boston, MA", "Westborough, MA", "Austin, TX","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA","Boston, MA"];
@@ -31,14 +31,15 @@
        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
        function initMap() {
 
-
+            //https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m
             var map = new google.maps.Map(document.getElementById('map'), {
               zoom: 3,
               center: {lat: 41.1158, lng: -98.0017}
             });
-            var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://raw.githubusercontent.com/googlemaps/v3-utility-library/master/markerclustererplus/images/m', maxZoom: 12, gridSize: 10});
+            var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'data/', maxZoom: 12, gridSize: 10, sentiment: sentiment_array});
+            console.log(markers);
             markerCluster.setMinClusterSize(1);
-                        
+            console.log(markerCluster);
             var geocoder = new google.maps.Geocoder();
             //for the location points in location array
             for(var i = 0; i < place_array.length; i++){
@@ -76,6 +77,7 @@
                 });
                 count++;
                 markerCluster.addMarker(marker);
+                console.log("markerCluster: " + markerCluster);
                 return marker; 
               } else {
                 alert('Geocode was not successful for the following reason: ' + status);

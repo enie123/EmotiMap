@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+    body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+    .graph .axis {
+        stroke-width: 1;
+    }
+    .graph .axis .tick line {
+        stroke: black;
+    }
+    .graph .axis .tick text {
+        fill: black;
+        font-size: 0.7em;
+    }
+    .graph .axis .domain {
+        fill: none;
+        stroke: black;
+    }
+    .graph .group {
+        fill: none;
+        stroke: black;
+        stroke-width: 1.5;
+    }
+    </style>
+  </head>
+  <body>
+    <h1>Real-Time Sentiment Analysis</h1>
+    <div class="graph" style="width:50%; margin-left:15px;"></div>
+    <div id="piechart" style="width: 45%; height: 500px;float:right;vertical-align:top"></div>
+    <div id="bardiv" style="width: 100%; height: 500px;margin-left:20px;"></div>
+    <script src='https://cdn.firebase.com/js/client/1.0.15/firebase.js'></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="http://code.angularjs.org/1.5.8/angular.js"></script>
+    <script src="mainController.js"></script>
+    <script src="https://rawgit.com/dotansimha/angularjs-dropdown-multiselect/master/src/angularjs-dropdown-multiselect.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.1.3/ui-bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.3/jquery.mobile-1.4.3.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src='https://cdn.firebase.com/js/client/1.0.15/firebase.js'></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.4.0/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyCxZkuXU1RqMPbUjhOk9b6VIHGhQ3U1BBU",
+        authDomain: " twitter-emotions.firebaseapp.com",
+        databaseURL: "https://twitter-emotions.firebaseio.com",
+        storageBucket: ""
+      };
+      firebase.initializeApp(config);
+    </script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script>
+      var toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
+      google.charts.load('current', {'packages':['corechart', 'bar']});
+      google.charts.setOnLoadCallback(drawChart);
+      numarray = [];
+      // This tells your web browser to respond when
+      // SOMEONE (i.e. maybe not even you) adds to the database
+      toDoDB.on('value', showItems);
+      function showItems(snapshot){
+        //gets data in database as a list
+        var data = snapshot.val();
+        //loops over each identifier in database
+        for (var identifier in data) {
+          numarray.push(data[identifier].score);
+          //console.log("ID: " + identifier);
+          //console.log("Data: " + data[identifier].task + ", " + data[identifier].reps);
+        }
+        drawChart();
+      }
+      //database shit
+      function drawChart() {
+        var likes1 = 0;
+        var likes2 = 0;
+        var likes3 = 0;
+        var likes4 = 0;
+        var likes5 = 0;
+        var likes6 = 0;
+        var likes7 = 0;
+        var likes8 = 0;
+        var likes9 = 0;
+        var likes10 = 0;
+        var num = 0;
+        while (num < numarray.length) {
+          if (0.1 >= numarray[num]) {
+            likes1 += 1;
+          }
+          else if (0.2 >= numarray[num]) {
+             likes2 += 1;
+          }
+          else if (0.3 >= numarray[num]) {
+             likes3 += 1;
+          }
+          else if (0.4 >= numarray[num]) {
+             likes4 += 1;
+          }
+          else if (0.5 >= numarray[num]) {
+             likes5 += 1;
+          }
+          else if (0.6 >= numarray[num]) {
+             likes6 += 1;
+          }
+          else if (0.7 >= numarray[num]) {
+             likes7 += 1;
+          }
+          else if (0.8 >= numarray[num]) {
+             likes8 += 1;
+          }
+          else if (0.9 >= numarray[num]) {
+             likes9 += 1;
+          }
+          else {
+             likes10 += 1;
+          }
+          num++;
+        }
+        var total = num;
+        var data = google.visualization.arrayToDataTable([
+          ['Sentiment', 'Percentage'],
+          ['Like',     likes10/total],
+          ['Like',  likes9/total],
+          ['Like',   likes8/total],
+          ['Like',     likes7/total],
+          ['Neutral',  likes6/total],
+          ['Neutral',   likes5/total],
+          ['Dislike',     likes4/total],
+          ['Dislike',  likes3/total],
+          ['Dislike',   likes2/total],
+          ['Dislike',     likes1/total],
+        ]);
+        var options = {
+          title: 'Overall Public Sentiment',
+          pieHole: 0.8,
+          pieSliceText: 'none',
+          fontName: 'Lato',
+          titleTextStyle: {
+            fontSize: 18,
+            bold: false,
+            italic: false
+          },
+          slices: {
+            0: {color: '#5CB3FF'},
+            1: {color: '#5CB3FF'},
+            2: {color: '#5CB3FF'},
+            3: {color: '#5CB3FF'},
+            4: {color: 'lightgray'},
+            5: {color: 'lightgray'},
+            6: {color: '#F75D59'},
+            7: {color: '#F75D59'},
+            8: {color: '#F75D59'},
+            9: {color: '#F75D59'},
+          },
+          legend: 'none',
+        };
+        var bardata = new google.visualization.arrayToDataTable([
+          ['Sentiment', 'Percentage', { role: 'style' }],
+          ['10/10',     likes10/total*100, 'fill-color: #5CB3FF;'],
+          ['9/10',  likes9/total*100, 'fill-color: #5CB3FF;'],
+          ['8/10',   likes8/total*100, 'fill-color: #5CB3FF;'],
+          ['7/10',     likes7/total*100, 'fill-color: #5CB3FF;'],
+          ['6/10',  likes6/total*100, 'fill-color: lightgray;'],
+          ['5/10',   likes5/total*100, 'fill-color: lightgray;'],
+          ['4/10',     likes4/total*100, 'fill-color: #F75D59;'],
+          ['3/10',  likes3/total*100, 'fill-color: #F75D59;'],
+          ['2/10',   likes2/total*100, 'fill-color: #F75D59;'],
+          ['1/10',     likes1/total*100, 'fill-color: #F75D59;']
+        ]);
+        var baroptions = {
+          width: 700,
+          fontName: 'Lato',
+          legend: { position: 'none' },
+          chart: { title: 'Public Sentiment',
+            subtitle: 'sentiment by percentage'},
+          bars: 'horizontal', // Required for Material Bar Charts.
+          axes: {
+            x: {
+              0: { side: 'top', label: 'Percentage'} // Top x-axis.
+            }
+          },
+          hAxis: {textStyle: {fontSize: 12, fontName: 'Lato', bold: true}},
+          vAxis: {textStyle: {fontSize: 12, fontName: 'Lato', bold: true}},
+          bar: { groupWidth: "90%" },
+        };
+
+        var barchart = new google.charts.Bar(document.getElementById('bardiv'));
+        barchart.draw(bardata, baroptions);
+        var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+        chart.draw(data, options);
+      };
+    </script>
+    <script>
+      numarray = [[],[],[]] //negative, neutral, positive
+      // This tells your web browser to respond when
+      // SOMEONE (i.e. maybe not even you) adds to the database
+      toDoDB.on('value', showItems);
+      
+      function showItems(snapshot){
+        //gets data in database as a list
+        var data = snapshot.val();
+        //loops over each identifier in database
+        for (var identifier in data) {
+          score = data[identifier].score;
+          if (score <= 0.5){
+            numarray[0].push(score+0.2);
+          } else if (score > 0.8){
+            numarray[2].push(score-0.2);
+          } else {numarray[1].push(score)}
+        }
+        console.log(numarray);
+      }
+      var limit = 60 * 1,
+        duration = 750,
+        now = new Date(Date.now() - duration)
+      var width = 1400,
+        height = 250
+      var groups = {
+        positive: {
+          value: 0,
+          color: 'blue',
+          data: d3.range(limit).map(function() {
+            return 0
+          })
+        },
+        neutral: {
+          value: 0,
+          color: 'grey',
+          data: d3.range(limit).map(function() {
+            return 0
+          })
+        },
+        negative: {
+          value: 0,
+          color: 'red',
+          data: d3.range(limit).map(function() {
+            return 0
+          })
+        }
+      }
+      var x = d3.time.scale()
+        .domain([now - (limit - 2), now - duration])
+        .range([0, width])
+      var y = d3.scale.linear()
+        .domain([0, 100])
+        .range([height, 0])
+      var line = d3.svg.line()
+        .interpolate('basis')
+        .x(function(d, i) {
+          return x(now - (limit - 1 - i) * duration)
+        })
+        .y(function(d) {
+          return y(d)
+        })
+      var svg = d3.select('.graph').append('svg')
+        .attr('class', 'chart')
+        .attr('width', width)
+        .attr('height', height + 50)
+      var axis = svg.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(x.axis = d3.svg.axis().scale(x).orient('bottom'))
+      var paths = svg.append('g')
+      for (var name in groups) {
+        var group = groups[name]
+        group.path = paths.append('path')
+          .data([group.data])
+          .attr('class', name + ' group')
+          .style('stroke', group.color)
+      }
+      count = 0;            
+      console.log(numarray);
+      function tick() {
+        count++;
+        console.log(count);
+        now = new Date()
+        keys = ['negative','neutral','positive']
+        // Add new values
+        for (i = 0; i < 3; i++) {
+          //console.log(numarray.length);
+          console.log(i,count);
+          var group = groups[keys[i]];
+          //console.log(i,count)
+          var score = numarray[i][count];
+          //console.log(score);
+          //console.log('prepush');
+          //console.log(numarray[0][0])
+          //group.data.push(group.value) // Real values arrive at irregular intervals
+          group.data.push(score*100);
+          console.log(score*100)
+          //console.log('successfully pushed');
+          group.path.attr('d', line);
+          //console.log('changed path attr');
+        }
+        //console.log(group.data)
+        // Shift domain
+        x.domain([now - (limit - 2) * duration, now - duration])
+        // Slide x-axis left
+        axis.transition()
+          .duration(duration)
+          .ease('linear')
+          .call(x.axis)
+        // Slide paths left
+        paths.attr('transform', null)
+          .transition()
+          .duration(duration)
+          .ease('linear')
+          .attr('transform', 'translate(' + x(now - (limit - 1) * duration) + ')')
+          .each('end', tick)
+        // Remove oldest data point from each group
+        for (var name in groups) {
+          var group = groups[name]
+          group.data.shift()
+        }      
+      }
+      tick()
+    </script>  
+  </body>
+</html>

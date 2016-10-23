@@ -34,7 +34,7 @@
     <div id="bardiv" style="width: 100%; height: 500px;margin-left:20px;"></div>
     <script src='https://cdn.firebase.com/js/client/1.0.15/firebase.js'></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="http://code.angularjs.org/1.5.8/angular.js"></script>
+    <script src="https://code.angularjs.org/1.5.8/angular.js"></script>
     <script src="mainController.js"></script>
     <script src="https://rawgit.com/dotansimha/angularjs-dropdown-multiselect/master/src/angularjs-dropdown-multiselect.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.1.3/ui-bootstrap.min.js"></script>
@@ -56,7 +56,7 @@
       };
       firebase.initializeApp(config);
     </script>
-    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
     <script>
       var toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
       google.charts.load('current', {'packages':['corechart', 'bar']});
@@ -214,7 +214,7 @@
             numarray[2].push(score-0.2);
           } else {numarray[1].push(score)}
         }
-        console.log(numarray);
+        //console.log(numarray);
       }
       var limit = 60 * 1,
         duration = 750,
@@ -275,16 +275,16 @@
           .style('stroke', group.color)
       }
       count = 0;            
-      console.log(numarray);
+      //console.log(numarray);
       function tick() {
         count++;
-        console.log(count);
+        //console.log(count);
         now = new Date()
         keys = ['negative','neutral','positive']
         // Add new values
         for (i = 0; i < 3; i++) {
           //console.log(numarray.length);
-          console.log(i,count);
+          //console.log(i,count);
           var group = groups[keys[i]];
           //console.log(i,count)
           var score = numarray[i][count];
@@ -293,7 +293,7 @@
           //console.log(numarray[0][0])
           //group.data.push(group.value) // Real values arrive at irregular intervals
           group.data.push(score*100);
-          console.log(score*100)
+          //console.log(score*100)
           //console.log('successfully pushed');
           group.path.attr('d', line);
           //console.log('changed path attr');

@@ -5,11 +5,9 @@ myApp.controller('myCtrl', function ($scope,$http) {
     apiKey: "AIzaSyCxZkuXU1RqMPbUjhOk9b6VIHGhQ3U1BBU",
     authDomain: " twitter-emotions.firebaseapp.com",
     databaseURL: "https://twitter-emotions.firebaseio.com",
-    storageBucket: "",
-    name: "hi"
+    storageBucket: ""
   };
   firebase.initializeApp($scope.config);
-  $scope.hide=true;
   $scope.database = firebase.database();
   $scope.toDoDB = new Firebase('https://twitter-emotions.firebaseio.com/');
   $scope.usersRef = $scope.toDoDB.child("users");
@@ -28,16 +26,40 @@ myApp.controller('myCtrl', function ($scope,$http) {
     		}
   		]
 	};
-  
+  $scope.showItems = function(snapshot){
+    //gets data in database as a list
+    var data = snapshot.val();
+    //loops over each identifier in database
+  }; 
 
+  $scope.toDoDB.on('value', $scope.showItems);
 
   $scope.sentiment = function(data){
-    $scope.req.data = data;
+    $scope.sdata = data;
+    $scope.original = data;
+    var count = 0;
+    newData = [];
+    while(count<data.length){
+      newData.push({'language':'en','id':$scope.sdata[count]['id']+count.toString(),'text':$scope.sdata[count].text});
+      count++;
+    }
+    $scope.req.data = {"documents":newData};
     $http($scope.req).then(function(data,status){
-        console.log(data)
-        $scope.sdata = data.documents;
+        $scope.sdata = data['data']['documents'];
+        loop = 0;
+        while(loop<count){
+          newData[loop]["score"] = $scope.sdata[loop]["score"];
+          newData[loop]["created_at"] = $scope.original[loop]['created_at'];
+          if ($scope.original[loop]['user']!=null & $scope.original[loop]['user']['location']!=null){newData[loop]['place'] = $scope.original[loop]['user']['location']
+          } else {
+            console.log("no loc");
+          };
+          $scope.toDoDB.push(newData[loop]);
+          loop++;
+        };
+        console.log('finished');
       }, function(){
-        console.log("ohshitmuch")
+        console.log("ohshitmuch") 
       });
   };
 
@@ -60,7 +82,7 @@ myApp.controller('myCtrl', function ($scope,$http) {
   };
   $scope.req2 = {
     method: 'POST',
-    url:'http://aamirafridi.com/twitter/?q=abc&count=100',
+    url:'http://aamirafridi.com/twitter/?q=%23abc&count=100',
   };
 
   $scope.req3 = {
@@ -70,10 +92,8 @@ myApp.controller('myCtrl', function ($scope,$http) {
     "count":"10"
   };
   $scope.search = function(){
-    $scope.hide=false;
-    $scope.req2.url = 'http://aamirafridi.com/twitter/?q='+$scope.hashtag+'&count=100'
+    $scope.req2.url = 'http://aamirafridi.com/twitter/?q='+$scope.hashtag+'&lang=en&count=100'
     $http($scope.req2).then(function(data,status){
-        console.log(data);
         $scope.data = data.data.statuses;
         $scope.sentiment($scope.data);
         console.log("i got dis");

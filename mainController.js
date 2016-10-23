@@ -26,6 +26,8 @@ myApp.controller('myCtrl', function ($scope,$http) {
         }
       ]
   };
+
+
   $scope.showItems = function(snapshot){
     //gets data in database as a list
     var data = snapshot.val();
@@ -58,6 +60,7 @@ myApp.controller('myCtrl', function ($scope,$http) {
           loop++;
         };
         console.log('finished');
+        $scope.ret();
       }, function(){
         console.log("ohshitmuch") 
       });
@@ -78,14 +81,7 @@ myApp.controller('myCtrl', function ($scope,$http) {
     url:'http://aamirafridi.com/twitter/?q=%23abc&count=100',
   };
 
-  $scope.search = function(){
-    $scope.toDoDB.remove();
-    if ($scope.hashtag.charAt(0) == "#") {
-      $scope.hashtag = "%23" + $scope.hashtag(1);
-    };
-    $scope.req2.url = 'http://aamirafridi.com/twitter/?q='+$scope.hashtag+'&lang=en&count=100'
-    count = 0;
-    while (count < 4) {
+  $scope.ret = function() {
       $http($scope.req2).then(function(data,status){
           $scope.data = data.data.statuses;
           $scope.sentiment($scope.data);
@@ -94,7 +90,24 @@ myApp.controller('myCtrl', function ($scope,$http) {
           console.log("ohshit");
         }
       );
-      count++;
+  };
+  $scope.flag = true;
+  $scope.search = function(){
+    $scope.toDoDB.remove();
+    if ($scope.hashtag.charAt(0) == "#") {
+      $scope.hashtag = "%23" + $scope.hashtag(1);
+    };
+    $scope.req2.url = 'http://aamirafridi.com/twitter/?q='+$scope.hashtag+'&lang=en&count=100'
+    if ($scope.flag) {
+      $scope.flag = false;
+      $http($scope.req2).then(function(data,status){
+          $scope.data = data.data.statuses;
+          $scope.sentiment($scope.data);
+        }, function(data){
+          console.log(data);
+          console.log("ohshit");
+        }
+      );
     };
   };
 
